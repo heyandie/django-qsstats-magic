@@ -114,9 +114,16 @@ class QuerySetStats(object):
 
         today = _remove_time(compat.now())
         def to_dt(d):
-            if isinstance(d, basestring):
-                return parse(d, yearfirst=True, default=today)
-            return d
+            # Fix from https://bitbucket.org/aztrock/django-qsstats-magic 
+            try:
+                if isinstance(d, basestring):
+                    return parse(d, yearfirst=True, default=today)
+                return d
+            except:
+                if isinstance(d, str):
+                    return parse(d, yearfirst=True, default=today)
+                return d            
+
 
         data = dict((to_dt(item['d']), item['agg']) for item in aggregate_data)
 
